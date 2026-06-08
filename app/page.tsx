@@ -1,66 +1,70 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { useState, useEffect } from "react";
+import CalendarView from "./_components/CalendarView";
+import PlanForm from "./_components/PlanForm";
+import { PlanData } from "./_interfaces/PlanData";
+import { findAllPlans, createPlan } from "./api/plans";
+import Header from "./_components/Header";
 
-export default function Home() {
+
+const Home = () => {
+  // 画面が開いた瞬間。バックエンドから帰ってくるデータの格納場所を定義
+  const [plans, setPlans] = useState<PlanData[]>([]);
+  // カレンダーでクリックされた日付を記憶する場所
+  const [selectedDate, setSelectedDate] = useState<string>("");
+
+  // useEffect：コンポーネントのマウント時やState変更時の副作用処理を記述
+  useEffect(() => {
+    const getPlans = async () => {
+      try {
+        // バックエンドにデータを要求
+        const response = await findAllPlans();
+        // 状態を更新
+        setPlans(response);
+      } catch (error) {
+        console.error('予定の取得に失敗しました:', error);
+      }
+    };
+    getPlans();
+  }, []);
+
+  // フォームから新しい予定が送られてきたときの処理（バックエンドへPOST送信）
+  const handleAddPlan = async (newPlan: Omit<PlanData, "id">) => {
+    try {
+      // 1. バックエンドにデータを送信して保存
+      await createPlan(newPlan);
+      
+      // 2. 保存に成功したら、最新のデータをもう一度取得し直す
+      const updatedPlans = await findAllPlans();
+      
+      // 3. 最新のデータで状態を更新し、画面に反映させる
+      setPlans(updatedPlans);
+    } catch (error) {
+      console.error('予定の追加に失敗しました:', error);
+      alert("予定の追加に失敗しました。");
+    }
+  };
+
+  // UIの記述
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      <Header />
+      
+      <main style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "40px" }}>
+        {/* 🌟 修正：クリックされたら selectedDate を更新するリモコン（onClickDate）を渡す */}
+        <CalendarView 
+          plans={plans} 
+          onClickDate={(dateStr) => setSelectedDate(dateStr)} 
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {/* 🌟 追加：入力フォーム部品を表示し、選択された日付と追加用リモコンを渡す */}
+        <PlanForm 
+          selectedDate={selectedDate} 
+          onClickAddPlan={handleAddPlan} 
+        />
       </main>
     </div>
   );
 }
+
+export default Home;

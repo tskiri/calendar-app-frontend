@@ -20,6 +20,7 @@ export const findAllPlans = async (): Promise<PlanData[]> => {
   }
 };
 
+// 予定の新規作成
 // Omit：補集合の形にしてカラムを羅列しないので、簡潔に書ける。
 // ここはリクエスト段階であり、idがまだ振られていないため、PlanDataから除外する。
 export const createPlan = async (planForm: Omit<PlanData, 'id'>): Promise<void> => {
