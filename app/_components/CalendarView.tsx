@@ -2,13 +2,14 @@ import { useState } from "react";
 import { PlanData } from "../_interfaces/PlanData";
 
 
-// page.tsxから plans を受け取るための「名簿（Propsの型）」を定義
+
 interface CalendarViewProps {
-  plans: PlanData[];
+  plans: PlanData[]; // page.tsxから plans を受け取るための「名簿（Propsの型）」を定義
+  onClickDate: (dateStr: string) => void;
 }
 
 // page.tsxからpropsで{ plans }を受け取り、かつ{ plans }が CalendarViewProps型（つまり{ plans }がplans: PlanData[];を守っている）であることを確認
-const CalendarView = ({ plans }: CalendarViewProps) => {
+const CalendarView = ({ plans, onClickDate }: CalendarViewProps) => {
   const today = new Date(); // 今日の日時を取得
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
@@ -78,7 +79,12 @@ const CalendarView = ({ plans }: CalendarViewProps) => {
           const dayPlans = plans.filter((plan) => plan.startDate === targetDateStr);
 
           return (
-            <div key={date} style={{ height: "100px", backgroundColor: "#fff", padding: "5px", boxSizing: "border-box" }}>
+            <div 
+            key={date} 
+            // クリックされたら親に日付（targetDateStr）を渡す
+            onClick={() => onClickDate(targetDateStr)}
+            // cursor: "pointer" を追加して、押せることをユーザーに伝える
+            style={{ height: "100px", backgroundColor: "#fff", padding: "5px", boxSizing: "border-box", cursor: "pointer" }}>
               <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{date}</div>
               
               <div style={{ marginTop: "5px" }}>
