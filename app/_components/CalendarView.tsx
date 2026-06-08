@@ -15,6 +15,26 @@ const CalendarView = ({ plans, onClickDate }: CalendarViewProps) => {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
   const weekdays = ["日", "月", "火", "水", "木", "金", "土"];
 
+  // 前の月に移動する処理
+  const handlePreMonth = () => {
+    if (currentMonth === 1) {
+      setCurrentYear(currentYear - 1);
+      setCurrentMonth(12);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+
+  // 次の月に移動する処理
+  const handleNextMonth = () => {
+    if (currentMonth === 12) {
+      setCurrentYear(currentYear + 1);
+      setCurrentMonth(1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+
   // getDay()：曜日を取得
   // プログラム上では、月だけ0(1月)～11(12月)で数える必要があるので、それに合うようマイナス1している。
   const startWeekday = new Date(currentYear, currentMonth - 1, 1).getDay();
@@ -43,13 +63,33 @@ const CalendarView = ({ plans, onClickDate }: CalendarViewProps) => {
     border: "1px solid #ddd"    // カレンダーの一番外側を囲う枠線
   };
 
+  // 月移動ボタンのスタイル
+  const ChangeTheMonthButton = {
+    padding: "5px 15px",
+    cursor: "pointer",
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    fontWeight: "bold"
+  }
+
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
       
-      {/* タイトル表示 */}
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-        {currentYear}年 {currentMonth}月
-      </h2>
+      {/* 🌟 修正：タイトル部分をフレックスボックスにして、両サイドにボタンを配置 */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <button onClick={handlePreMonth} style={ChangeTheMonthButton}>
+          &lt; 前の月
+        </button>
+
+        <h2 style={{ margin: 0 }}>
+          {currentYear}年 {currentMonth}月
+        </h2>
+        
+        <button onClick={handleNextMonth} style={ChangeTheMonthButton}>
+          次の月 &gt;
+        </button>
+      </div>
 
       {/* 1つの大きなGridの箱 */}
       <div style={gridLayout}>
