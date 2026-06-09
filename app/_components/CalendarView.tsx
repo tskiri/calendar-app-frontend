@@ -56,49 +56,31 @@ const CalendarView = ({ plans, onClickDate, onClickDelete, onClickPlanTitle }: C
     dateNumbers.push(i);
   }
 
-  // 下記で呼び出す「1つの大きなGridの箱」を定義
-  const gridLayout = {
-    display: "grid",
-    gridTemplateColumns: "repeat(7, 1fr)",
-    backgroundColor: "#ddd",    // 背景色（グレー）を作り、
-    gap: "1px",                 // ギャップを作って背景色を「線」にする
-    border: "1px solid #ddd"    // カレンダーの一番外側を囲う枠線
-  };
-
-  // 月移動ボタンのスタイル
-  const ChangeTheMonthButton = {
-    padding: "5px 15px",
-    cursor: "pointer",
-    backgroundColor: "#fff",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    fontWeight: "bold"
-  }
+  // // 下記で呼び出す「1つの大きなGridの箱」を定義
+  // const gridLayout = {
+  //   display: "grid",
+  //   gridTemplateColumns: "repeat(7, 1fr)",
+  //   backgroundColor: "#ddd",    // 背景色（グレー）を作り、
+  //   gap: "1px",                 // ギャップを作って背景色を「線」にする
+  //   border: "1px solid #ddd"    // カレンダーの一番外側を囲う枠線
+  // };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
-      
-      {/* タイトル部分をフレックスボックスにして、両サイドにボタンを配置 */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <button onClick={handlePreMonth} style={ChangeTheMonthButton}>
-          &lt; 前の月
-        </button>
-
-        <h2 style={{ margin: 0 }}>
-          {currentYear}年 {currentMonth}月
-        </h2>
-        
-        <button onClick={handleNextMonth} style={ChangeTheMonthButton}>
-          次の月 &gt;
-        </button>
+    <div> 
+      {/* 月移動ヘッダー */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <button onClick={handlePreMonth}>&lt; 前の月</button>
+        <h2>{currentYear}年 {currentMonth}月</h2>
+        <button onClick={handleNextMonth}>次の月 &gt;</button>
       </div>
 
-      {/* 1つの大きなGridの箱 */}
-      <div style={gridLayout}>
+      {/* カレンダー本体（7列のGridレイアウト） */} 
+      {/* これにより「どれだけ中身が長くても、最小幅を0とみなして、絶対に強制的に7等分にする」という命令に変わり、曜日の幅が崩れなくなります。 */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: "1px", backgroundColor: "#ccc", border: "1px solid #ccc" }}>
         
         {/* １．曜日のマス：薄グレー */}
         {weekdays.map((day) => (
-          <div key={day} style={{ textAlign: "center", fontWeight: "bold", backgroundColor: "#f5f5f5", padding: "5px 0" }}>
+          <div key={day} style={{ textAlign: "center", backgroundColor: "#f5f5f5", padding: "5px 0" }}>
             {day}
           </div>
         ))}
@@ -121,38 +103,37 @@ const CalendarView = ({ plans, onClickDate, onClickDelete, onClickPlanTitle }: C
           const dayPlans = plans.filter((plan) => plan.startDate === targetDateStr);
 
           return (
-            <div 
-            key={date} 
-            // クリックされたら親に日付（targetDateStr）を渡す
-            onClick={() => onClickDate(targetDateStr)}
-            // cursor: "pointer" を追加して、押せることをユーザーに伝える
-            style={{ height: "100px", backgroundColor: "#fff", padding: "5px", boxSizing: "border-box", cursor: "pointer" }}>
-              <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>{date}</div>
+            <div key={date} 
+                  // クリックされたら親に日付（targetDateStr）を渡す
+                  onClick={() => onClickDate(targetDateStr)}
+                  // 「overflow: "hidden"」：万が一文字がはみ出そうとしたときに、マスの外に突き抜けてカレンダーを壊すのを防ぐ。
+                  style={{ height: "100px", backgroundColor: "#fff", padding: "4px", boxSizing: "border-box", cursor: "pointer", overflow: "hidden" }}
+            >
+              <div style={{ fontSize: "0.85rem", fontWeight: "bold", marginBottom: "2px" }}>
+                {date}
+              </div>
               
-              <div style={{ marginTop: "5px" }}>
+              <div>
                 {dayPlans.map((plan) => (
-                  <div key={plan.id} style={{ 
-                    backgroundColor: "#e3f2fd", color: "#1e88e5", fontSize: "0.75rem", padding: "2px 4px", borderRadius: "3px", 
-                    marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                    
+                  <div 
+                    key={plan.id} 
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#e3f2fd", color: "#1e88e5", padding: "2px 4px", margin: "2px 0", borderRadius: "3px", fontSize: "0.75rem" }}>
                     {/* 予定のタイトル */}
-                    <span
-                      onClick={(e) => {
-                        e.stopPropagation();    // 親の「日付マスのクリックイベント」が発動するのを止める
-                        onClickPlanTitle(plan); // クリックされた予定データを親に渡す
-                      }}
+                    <span onClick={(e) => {
+                          e.stopPropagation();    // 親の「日付マスのクリックイベント」が発動するのを止める
+                          onClickPlanTitle(plan); // クリックされた予定データを親に渡す
+                          }}
+                          style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}
                     >
                       {plan.title}
                     </span>
 
                     {/* 削除ボタン */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation(); // 親の「日付マスのクリックイベント」が発動するのを止める
-                        onClickDelete(plan.id); // page.tsxから貰ったリモコンのスイッチを押す（IDを渡す）
-                      }}
-                      style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0" }}
-                      title="削除"
+                    <button onClick={(e) => {
+                            e.stopPropagation(); // 親の「日付マスのクリックイベント」が発動するのを止める
+                            onClickDelete(plan.id); // page.tsxから貰ったリモコンのスイッチを押す（IDを渡す）
+                            }}
+                            style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0 0 0 4px", fontSize: "0.75rem" }}
                     >
                       🗑️
                     </button>

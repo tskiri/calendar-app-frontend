@@ -33,7 +33,7 @@ const PlanForm = ({ selectedDate, onClickAddPlan }: PlanFormProps) => {
   // 日付が選ばれていない時はメッセージを表示
   if (!selectedDate) {
     return (
-      <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
+      <div>
         カレンダーの日付をクリックして予定を追加してください
       </div>
     );
@@ -41,17 +41,16 @@ const PlanForm = ({ selectedDate, onClickAddPlan }: PlanFormProps) => {
 
   // 日付が選ばれている時は入力フォームを表示
   return (
-    <div style={{ padding: "20px", border: "1px solid #D8D8D8", borderRadius: "5px", marginTop: "20px" }}>
-      <h3 style={{ marginBottom: "15px" }}>{selectedDate} の予定を追加</h3>
-      <form onSubmit={handleSubmit} style={{ display: "flex", gap: "10px" }}>
+    <div>
+      <h3>{selectedDate} の予定を追加</h3>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="予定のタイトル"
-          style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
         />
-        <button type="submit" style={{ padding: "8px 20px", backgroundColor: "#57C3E9", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>
+        <button type="submit">
           追加
         </button>
       </form>
