@@ -7,10 +7,11 @@ interface CalendarViewProps {
   plans: PlanData[]; // page.tsxから plans を受け取るための「名簿（Propsの型）」を定義
   onClickDate: (dateStr: string) => void;
   onClickDelete: (id: number) => void;
+  onClickPlanTitle: (plan: PlanData) => void;
 }
 
 // page.tsxからpropsで{ plans }を受け取り、かつ{ plans }が CalendarViewProps型（つまり{ plans }がplans: PlanData[];を守っている）であることを確認
-const CalendarView = ({ plans, onClickDate, onClickDelete }: CalendarViewProps) => {
+const CalendarView = ({ plans, onClickDate, onClickDelete, onClickPlanTitle }: CalendarViewProps) => {
   const today = new Date(); // 今日の日時を取得
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
@@ -135,12 +136,19 @@ const CalendarView = ({ plans, onClickDate, onClickDelete }: CalendarViewProps) 
                     marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
                     
                     {/* 予定のタイトル */}
-                    {plan.title}
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();    // 親の「日付マスのクリックイベント」が発動するのを止める
+                        onClickPlanTitle(plan); // クリックされた予定データを親に渡す
+                      }}
+                    >
+                      {plan.title}
+                    </span>
 
                     {/* 削除ボタン */}
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // 🌟重要：親の「日付マスのクリックイベント」が発動するのを止める
+                        e.stopPropagation(); // 親の「日付マスのクリックイベント」が発動するのを止める
                         onClickDelete(plan.id); // page.tsxから貰ったリモコンのスイッチを押す（IDを渡す）
                       }}
                       style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0" }}
@@ -148,7 +156,7 @@ const CalendarView = ({ plans, onClickDate, onClickDelete }: CalendarViewProps) 
                     >
                       🗑️
                     </button>
-                    
+
                   </div>
                 ))}
               </div>
