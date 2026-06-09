@@ -47,3 +47,17 @@ export const deletePlan = async (id: number) :Promise<void> => {
   throw error;
   }
 };
+
+// 予定の更新（編集）
+export const updatePlan = async (id: number, planForm: Omit<PlanData, 'id'>): Promise<void> => {
+  try {
+    // どのIDを書き換えるかをURLで指定し、新しいデータを一緒に送る（PUT送信）
+    await api.put(`/plans/${id}`, planForm);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('APIリクエストエラー:', error.response?.data);
+      throw new Error('予定の更新に失敗しました');
+    }
+    throw error;
+  }
+};
