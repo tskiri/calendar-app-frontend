@@ -34,3 +34,16 @@ export const createPlan = async (planForm: Omit<PlanData, 'id'>): Promise<void> 
     throw error;
   }
 };
+
+// 予定の削除
+export const deletePlan = async (id: number) :Promise<void> => {
+  try {
+    await api.delete(`/plans/${id}`)
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('APIリクエストエラー:', error.response?.data);
+      throw new Error('予定の削除に失敗しました');
+    }
+  throw error;
+  }
+};

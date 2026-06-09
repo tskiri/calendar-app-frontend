@@ -6,10 +6,11 @@ import { PlanData } from "../_interfaces/PlanData";
 interface CalendarViewProps {
   plans: PlanData[]; // page.tsxから plans を受け取るための「名簿（Propsの型）」を定義
   onClickDate: (dateStr: string) => void;
+  onClickDelete: (id: number) => void;
 }
 
 // page.tsxからpropsで{ plans }を受け取り、かつ{ plans }が CalendarViewProps型（つまり{ plans }がplans: PlanData[];を守っている）であることを確認
-const CalendarView = ({ plans, onClickDate }: CalendarViewProps) => {
+const CalendarView = ({ plans, onClickDate, onClickDelete }: CalendarViewProps) => {
   const today = new Date(); // 今日の日時を取得
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth() + 1);
@@ -76,7 +77,7 @@ const CalendarView = ({ plans, onClickDate }: CalendarViewProps) => {
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
       
-      {/* 🌟 修正：タイトル部分をフレックスボックスにして、両サイドにボタンを配置 */}
+      {/* タイトル部分をフレックスボックスにして、両サイドにボタンを配置 */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <button onClick={handlePreMonth} style={ChangeTheMonthButton}>
           &lt; 前の月
@@ -129,8 +130,25 @@ const CalendarView = ({ plans, onClickDate }: CalendarViewProps) => {
               
               <div style={{ marginTop: "5px" }}>
                 {dayPlans.map((plan) => (
-                  <div key={plan.id} style={{ backgroundColor: "#e3f2fd", color: "#1e88e5", fontSize: "0.75rem", padding: "2px 4px", borderRadius: "3px", marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <div key={plan.id} style={{ 
+                    backgroundColor: "#e3f2fd", color: "#1e88e5", fontSize: "0.75rem", padding: "2px 4px", borderRadius: "3px", 
+                    marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    
+                    {/* 予定のタイトル */}
                     {plan.title}
+
+                    {/* 削除ボタン */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // 🌟重要：親の「日付マスのクリックイベント」が発動するのを止める
+                        onClickDelete(plan.id); // page.tsxから貰ったリモコンのスイッチを押す（IDを渡す）
+                      }}
+                      style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0" }}
+                      title="削除"
+                    >
+                      🗑️
+                    </button>
+                    
                   </div>
                 ))}
               </div>
