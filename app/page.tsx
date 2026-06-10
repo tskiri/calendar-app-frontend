@@ -4,7 +4,6 @@ import CalendarView from "./_components/CalendarView";
 import PlanForm from "./_components/PlanForm";
 import { PlanData } from "./_interfaces/PlanData";
 import { findAllPlans, createPlan, deletePlan, updatePlan } from "./api/plans";
-import Header from "./_components/Header";
 import Modal from "./_components/modal";
 import PlanDetail from "./_components/PlanDetail";
 
@@ -118,9 +117,7 @@ const Home = () => {
   // UIの記述
   return (
     <div>
-      <Header />
-      
-      <main style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "40px" }}>
+      <main style={{ maxWidth: "1000px", margin: "0 auto", paddingBottom: "40px" }}>
         {/* クリックされたら selectedDate を更新するリモコン（onClickDate）を渡す */}
         <CalendarView 
           plans={plans} 
