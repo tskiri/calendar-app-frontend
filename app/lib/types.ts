@@ -1,3 +1,5 @@
+// TypeScriptの型定義
+
 export type EventType = 'OFFICIAL' | 'TASK' | 'PRIVATE';
 
 export interface PlanData {
