@@ -52,7 +52,7 @@ const renderModalContent = () => {
 
   return (
     <div>
-      <main style={{ maxWidth: "1000px", margin: "0 auto", padding: "20px 10px 40px 10px" }}>
+      <main style={{ maxWidth: "800px", margin: "0 auto", padding: "20px 10px 40px 10px" }}>
         
         <CalendarBoard 
           plans={plans}

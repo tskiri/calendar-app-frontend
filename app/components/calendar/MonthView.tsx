@@ -18,7 +18,9 @@ return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(7, minmax(0, 1fr))", gap: "1px", backgroundColor: "#ccc", border: "1px solid #ccc" }}>
       {/* 曜日ヘッダー */}
       {weekdays.map((day) => (
-        <div key={day} style={{ textAlign: "center", backgroundColor: "#f5f5f5", padding: "6px 0", fontWeight: "bold" }}>
+        <div  key={day} 
+              style={{ textAlign: "center", backgroundColor: "#f5f5f5", padding: "6px 0", fontWeight: "bold" }}
+        >
           {day}
         </div>
       ))}
@@ -36,7 +38,7 @@ return (
             key={targetDateStr} 
             onClick={() => onClickDate(targetDateStr)} 
             style={{ 
-              minHeight: "100px", 
+              minHeight: "80px", 
               backgroundColor: "#fff", 
               padding: "6px", 
               boxSizing: "border-box", 
@@ -45,11 +47,13 @@ return (
             }}
           >
             {/* 日付の数字 */}
-            <div style={{ fontSize: "0.85rem", fontWeight: "bold", color: isCurrentMonth ? "#333" : "#bbb", marginBottom: "6px" }}>
+            <div style={{ fontSize: "0.85rem", 
+                          fontWeight: "bold", 
+                          color: isCurrentMonth ? "#333" : "#bbb", marginBottom: "6px" }}>
               {date.getDate()}日
             </div>
             
-            {/* その日の予定リスト（縦に素直に並ぶ） */}
+            {/* その日の予定リスト（縦に並べる） */}
             <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
               {dayPlans.map((plan) => {
                 const colors = getPlanColors(plan.eventType);
@@ -67,9 +71,9 @@ return (
                       borderRadius: "3px", 
                       fontSize: "0.75rem", 
                       fontWeight: "bold",
-                      textOverflow: "ellipsis", 
-                      whiteSpace: "nowrap", 
-                      overflow: "hidden" 
+                      textOverflow: "ellipsis", // 長いタイトルは「...」にする
+                      whiteSpace: "nowrap", // 折り返す
+                      overflow: "hidden" // 長いコメントが横にはみ出るのを防ぐ　
                     }}
                   >
                     {plan.title}
